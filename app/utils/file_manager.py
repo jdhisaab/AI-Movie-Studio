@@ -1,4 +1,5 @@
 from pathlib import Path
+from datetime import datetime
 
 
 class FileManager:
@@ -13,7 +14,11 @@ class FileManager:
     def write_text(file_path: str, content: str):
         """Write text to a file."""
         path = Path(file_path)
-
         path.parent.mkdir(parents=True, exist_ok=True)
-
         path.write_text(content, encoding="utf-8")
+
+    @staticmethod
+    def generate_story_filename() -> str:
+        """Generate a unique filename for a story."""
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        return f"output/stories/story_{timestamp}.txt"

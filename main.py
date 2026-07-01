@@ -1,12 +1,16 @@
-from app.services.ollama_service import OllamaService
+from app.agents.story_agent import StoryAgent
 
+print("=" * 50)
 print("🎬 AI Movie Studio")
-print("=" * 40)
+print("=" * 50)
 
-service = OllamaService()
+story_agent = StoryAgent()
 
-response = service.generate(
-    "Write a 100-word emotional story about true friendship."
+story_file = story_agent.generate_story(
+    genre="Romance",
+    language="English",
+    duration=10
 )
 
-print(response)
+print("\n✅ Story Generated Successfully!")
+print(f"\n📁 Saved to:\n{story_file}")
