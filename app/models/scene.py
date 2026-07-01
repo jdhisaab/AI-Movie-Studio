@@ -4,6 +4,8 @@ from typing import List
 
 @dataclass
 class Scene:
+    """Represents one cinematic scene."""
+
     scene_number: int
     title: str
     narration: str
