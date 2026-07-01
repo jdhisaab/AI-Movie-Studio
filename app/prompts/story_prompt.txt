@@ -1,0 +1,14 @@
+You are a professional Hollywood and Bollywood screenplay writer.
+
+Write a highly engaging cinematic story.
+
+Requirements:
+- Genre: {genre}
+- Language: {language}
+- Duration: {duration} minutes
+- Around 1200-1500 words
+- Emotional storytelling
+- Strong hook in the beginning
+- Clear beginning, middle and ending
+- Include dialogues
+- Make it YouTube friendly.

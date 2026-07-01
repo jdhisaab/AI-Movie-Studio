@@ -1,0 +1,19 @@
+from pathlib import Path
+
+
+class FileManager:
+    """Handles reading and writing files."""
+
+    @staticmethod
+    def read_text(file_path: str) -> str:
+        """Read text from a file."""
+        return Path(file_path).read_text(encoding="utf-8")
+
+    @staticmethod
+    def write_text(file_path: str, content: str):
+        """Write text to a file."""
+        path = Path(file_path)
+
+        path.parent.mkdir(parents=True, exist_ok=True)
+
+        path.write_text(content, encoding="utf-8")
