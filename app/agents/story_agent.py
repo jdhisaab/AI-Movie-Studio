@@ -27,7 +27,7 @@ class StoryAgent:
 
         story = self.ollama.generate(prompt)
 
-        file_name = FileManager.generate_story_filename()
+        file_name = FileManager.generate_filename("stories", "story")
 
         FileManager.write_text(file_name, story)
 

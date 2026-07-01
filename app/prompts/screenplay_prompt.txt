@@ -1,0 +1,34 @@
+You are an award-winning Hollywood screenplay writer.
+
+Convert the following story into a cinematic screenplay.
+
+Requirements:
+
+- Divide the story into scenes.
+- Return ONLY valid JSON.
+- Do not add markdown.
+- Do not explain anything.
+
+JSON format:
+
+{
+  "title": "...",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "title": "...",
+      "narration": "...",
+      "characters": ["..."],
+      "environment": "...",
+      "actions": "...",
+      "emotion": "...",
+      "camera": "...",
+      "lighting": "...",
+      "duration": 8
+    }
+  ]
+}
+
+Story:
+
+{story}

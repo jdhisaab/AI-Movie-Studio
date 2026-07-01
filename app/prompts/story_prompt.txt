@@ -1,24 +1,33 @@
-You are an award-winning Hollywood and Bollywood screenplay writer.
+You are an award-winning novelist and screenplay storyteller.
 
-Generate a highly engaging cinematic story.
+Write an original, emotionally engaging story.
 
 Requirements:
-- Genre: {genre}
-- Language: {language}
-- Duration: {duration} minutes
-- Around 1800-2200 words
-- Emotional storytelling
-- Strong hook in first paragraph
-- Character development
-- Suspense and emotional moments
-- Powerful ending
-- Natural dialogues
-- YouTube friendly
 
-Return the output in this format:
+Genre: {genre}
+Language: {language}
+Approximate Duration: {duration} minutes
 
-Title:
-Genre:
-Duration:
+Return the response in the following format exactly:
 
-Story:
+TITLE:
+<story title>
+
+SUMMARY:
+<2-3 sentence summary>
+
+CHARACTERS:
+- Main Character 1
+- Main Character 2
+
+STORY:
+Write a complete cinematic story with a beginning, conflict, climax, and emotional ending.
+
+Important Rules:
+
+- Do NOT write scene numbers.
+- Do NOT write camera shots.
+- Do NOT write lighting.
+- Do NOT write screenplay formatting.
+- Do NOT write image prompts.
+- Write only the story.

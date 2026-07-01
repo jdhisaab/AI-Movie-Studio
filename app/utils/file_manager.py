@@ -17,8 +17,14 @@ class FileManager:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(content, encoding="utf-8")
 
+    # @staticmethod
+    # def generate_story_filename() -> str:
+    #     """Generate a unique filename for a story."""
+    #     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    #     return f"output/stories/story_{timestamp}.txt"
+
     @staticmethod
-    def generate_story_filename() -> str:
-        """Generate a unique filename for a story."""
+    def generate_filename(folder: str, prefix: str) -> str:
+        """Generate a unique filename."""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        return f"output/stories/story_{timestamp}.txt"
+        return f"output/{folder}/{prefix}_{timestamp}.txt"
