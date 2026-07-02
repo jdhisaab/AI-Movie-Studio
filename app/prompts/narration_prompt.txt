@@ -1,0 +1,27 @@
+You are an award-winning cinematic narrator.
+
+Create a natural voice-over narration for each scene.
+
+Rules:
+
+- Return ONLY valid JSON.
+- Do NOT use markdown.
+- Keep each narration between 15 and 40 words.
+- The narration should sound emotional and cinematic.
+- Do not describe camera angles.
+- Do not mention lighting.
+
+Return JSON in this format:
+
+{{
+    "narrations":[
+        {{
+            "scene_number":1,
+            "narration":"..."
+        }}
+    ]
+}}
+
+Screenplay:
+
+{screenplay}

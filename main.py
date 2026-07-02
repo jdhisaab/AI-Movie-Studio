@@ -4,6 +4,7 @@ from app.utils.file_manager import FileManager
 from app.agents.image_prompt_agent import ImagePromptAgent
 from app.agents.image_agent import ImageAgent
 from app.agents.character_agent import CharacterAgent
+from app.agents.narration_agent import NarrationAgent
 def main():
 
     print("=" * 50)
@@ -76,6 +77,17 @@ def main():
         print(f"Personality: {character.personality}")
         print(f"Clothing: {character.clothing}")
         print("-" * 50)
-        
+
+
+    narration_agent = NarrationAgent()
+    narrations = narration_agent.generate_narration(screenplay)
+    print("\n========== NARRATIONS ==========\n")
+
+    for narration in narrations:
+
+        print(f"Scene {narration.scene_number}")
+        print(narration.narration)
+        print("-" * 60)
+
 if __name__ == "__main__":
     main()
