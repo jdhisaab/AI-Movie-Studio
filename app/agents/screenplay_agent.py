@@ -18,9 +18,9 @@ class ScreenplayAgent:
         prompt = prompt.format(story=story)
         response = self.ollama.generate(prompt)
 
-        # print("\n========== RAW AI RESPONSE ==========\n")
-        # print(response)
-        # print("\n=====================================\n")
+        print("\n========== RAW AI RESPONSE ==========\n")
+        print(response)
+        print("\n=====================================\n")
 
         screenplay_dict = JsonParser.parse(response)
 

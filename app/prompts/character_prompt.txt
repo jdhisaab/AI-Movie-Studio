@@ -1,0 +1,24 @@
+You are an expert movie casting director.
+
+Analyze the screenplay and identify all important characters.
+
+Return ONLY valid JSON.
+
+Format:
+
+{{
+  "characters": [
+    {{
+      "name": "",
+      "gender": "",
+      "age": "",
+      "appearance": "",
+      "personality": "",
+      "clothing": ""
+    }}
+  ]
+}}
+
+Screenplay:
+
+{screenplay}

@@ -1,8 +1,9 @@
 from app.agents.story_agent import StoryAgent
 from app.agents.screenplay_agent import ScreenplayAgent
 from app.utils.file_manager import FileManager
-
-
+from app.agents.image_prompt_agent import ImagePromptAgent
+from app.agents.image_agent import ImageAgent
+from app.agents.character_agent import CharacterAgent
 def main():
 
     print("=" * 50)
@@ -15,7 +16,7 @@ def main():
     story_file = story_agent.generate_story(
         genre="Romance",
         language="English",
-        duration=10
+        duration=1 #minutes
     )
 
     print(f"\n✅ Story Saved:\n{story_file}")
@@ -43,7 +44,38 @@ def main():
     print("Emotion:", scene.emotion)
 
     print(f"\n✅ Screenplay Saved:\n{screenplay_file}")
+    image_prompt_agent = ImagePromptAgent()
+    image_prompts = image_prompt_agent.generate_prompts(screenplay)
+    print("\n========== IMAGE PROMPTS ==========\n")
 
+    for i, prompt in enumerate(image_prompts, start=1):
 
+        print(f"\nScene {i}\n")
+
+        # print(prompt)
+
+        print("-" * 80)
+    
+    image_agent = ImageAgent()
+    image_files = image_agent.generate_images(image_prompts)
+    print("\nGenerated Images:")
+
+    for image in image_files:
+        print(image)
+
+    character_agent = CharacterAgent()
+    characters = character_agent.generate_characters(screenplay)
+    print("\n========== CHARACTERS ==========\n")
+
+    for character in characters:
+
+        print(f"Name: {character.name}")
+        print(f"Gender: {character.gender}")
+        print(f"Age: {character.age}")
+        print(f"Appearance: {character.appearance}")
+        print(f"Personality: {character.personality}")
+        print(f"Clothing: {character.clothing}")
+        print("-" * 50)
+        
 if __name__ == "__main__":
     main()
