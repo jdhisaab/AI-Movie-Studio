@@ -1,5 +1,6 @@
-from app.utils.file_manager import FileManager
 from app.services.ollama_service import OllamaService
+from app.utils.file_manager import FileManager
+from app.utils.json_parser import JsonParser
 
 
 class ImagePromptAgent:
@@ -7,38 +8,14 @@ class ImagePromptAgent:
     def __init__(self):
         self.ollama = OllamaService()
 
-    def generate_prompts(self, screenplay):
+    def generate_prompt(self, scene: str):
 
-        prompt_template = FileManager.read_text(
+        prompt = FileManager.read_text(
             "app/prompts/image_prompt.txt"
         )
 
-        prompts = []
+        prompt = prompt.format(scene=scene)
 
-        for scene in screenplay.scenes:
+        response = self.ollama.generate(prompt)
 
-            scene_text = f"""
-Title: {scene.title}
-
-Narration: {scene.narration}
-
-Characters: {', '.join(scene.characters)}
-
-Environment: {scene.environment}
-
-Actions: {scene.actions}
-
-Emotion: {scene.emotion}
-
-Camera: {scene.camera}
-
-Lighting: {scene.lighting}
-"""
-
-            prompt = prompt_template.format(scene=scene_text)
-
-            image_prompt = self.ollama.generate(prompt)
-
-            prompts.append(image_prompt)
-
-        return prompts
+        return JsonParser.parse(response)

@@ -46,7 +46,7 @@ def main():
 
     print(f"\n✅ Screenplay Saved:\n{screenplay_file}")
     image_prompt_agent = ImagePromptAgent()
-    image_prompts = image_prompt_agent.generate_prompts(screenplay)
+    image_prompts = image_prompt_agent.generate_prompt(screenplay)
     print("\n========== IMAGE PROMPTS ==========\n")
 
     for i, prompt in enumerate(image_prompts, start=1):
