@@ -46,3 +46,10 @@ class FileManager:
         """Read JSON file."""
         with open(file_path, "r", encoding="utf-8") as file:
             return json.load(file)
+
+    @staticmethod
+    def load_prompt(filename: str) -> str:
+        path = f"app/prompts/{filename}"
+
+        with open(path, "r", encoding="utf-8") as file:
+            return file.read()

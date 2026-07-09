@@ -1,34 +1,24 @@
-from app.services.ollama_service import OllamaService
-from app.utils.file_manager import FileManager
+from app.agents.base_agent import BaseAgent
 
 
-class StoryAgent:
-    """Agent responsible for generating cinematic stories."""
+class StoryAgent(BaseAgent):
 
     def __init__(self):
-        self.ollama = OllamaService()
+        super().__init__()
 
-    def generate_story(
-        self,
-        genre: str,
-        language: str,
-        duration: int
-    ) -> str:
+    def generate_story(self, genre, language, duration):
 
-        prompt = FileManager.read_text(
-            "app/prompts/story_prompt.txt"
+        prompt = self.load_prompt("story_prompt.txt")
+
+        prompt = self.replace_variables(
+            prompt,
+            {
+                "genre": genre,
+                "language": language,
+                "duration": duration
+            }
         )
 
-        prompt = prompt.format(
-            genre=genre,
-            language=language,
-            duration=duration
-        )
+        story = self.generate(prompt)
 
-        story = self.ollama.generate(prompt)
-
-        file_name = FileManager.generate_filename("stories", "story")
-
-        FileManager.write_text(file_name, story)
-
-        return file_name
+        return story

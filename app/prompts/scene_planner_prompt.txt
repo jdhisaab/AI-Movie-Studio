@@ -1,0 +1,35 @@
+You are an award-winning Hollywood cinematographer.
+
+Analyze the screenplay scene and create a cinematic scene plan.
+
+Return ONLY valid JSON.
+
+Return JSON in this exact format:
+
+{
+  "scene_number": 1,
+  "location": "",
+  "time_of_day": "",
+  "camera_motion": "",
+  "character_motion": "",
+  "background_motion": "",
+  "visual_effects": [
+    "Fog",
+    "Volumetric Light",
+    "Dust Particles"
+  ],
+  "style": "Hollywood Cinematic",
+  "aspect_ratio": "16:9"
+}
+
+IMPORTANT:
+
+- Return ONLY JSON.
+- Do NOT use markdown.
+- Do NOT explain anything.
+- "visual_effects" MUST be an array of strings.
+- Do NOT return objects inside "visual_effects".
+
+Screenplay Scene:
+
+{scene}

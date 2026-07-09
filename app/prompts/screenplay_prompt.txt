@@ -1,17 +1,22 @@
 You are an award-winning Hollywood screenplay writer.
 
-Convert the following story into a professional cinematic screenplay.
+Your task is to convert the following story into a professional cinematic screenplay.
 
 Requirements:
 
 - Divide the story into 15-25 scenes.
 - Return ONLY valid JSON.
-- Do NOT use markdown.
-- Do NOT wrap JSON inside ``` blocks.
-- Every scene should be 6-10 seconds long.
-- Keep the narration short and visual.
+- Do NOT include markdown.
+- Do NOT wrap the JSON inside ``` blocks.
+- Do NOT include explanations before or after the JSON.
+- Every scene should last between 6 and 10 seconds.
+- Keep narration short, visual, and cinematic.
+- Maintain continuity between scenes.
+- Use consistent character names throughout.
+- Every scene must include all required fields.
+- The output must be a single valid JSON object.
 
-Return JSON in this exact format:
+Return JSON in the following format:
 
 {{
   "title": "Movie Title",
@@ -19,17 +24,32 @@ Return JSON in this exact format:
     {{
       "scene_number": 1,
       "title": "Scene Title",
-      "narration": "...",
-      "characters": ["Character 1"],
-      "environment": "...",
-      "actions": "...",
-      "emotion": "...",
-      "camera": "...",
-      "lighting": "...",
+      "narration": "Short cinematic narration",
+      "characters": [
+        "Character Name"
+      ],
+      "environment": "Location description",
+      "actions": "What happens in the scene",
+      "emotion": "Primary emotion",
+      "camera": "Camera shot",
+      "lighting": "Lighting description",
       "duration": 8
     }}
   ]
 }}
+
+IMPORTANT:
+
+- Output ONLY the JSON object.
+- Do NOT write "Here is the JSON".
+- Do NOT write notes or explanations.
+- Do NOT use markdown.
+- Escape all double quotes inside string values.
+- Separate every JSON property with a comma.
+- Ensure all arrays and objects are properly closed.
+- Validate the JSON before responding.
+- Every scene_number must be unique.
+- Duration must be an integer between 6 and 10.
 
 Story:
 
