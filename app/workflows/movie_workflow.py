@@ -1,30 +1,41 @@
+from app.workflows.base_workflow import BaseWorkflow
+
 from app.agents.story_agent import StoryAgent
 from app.agents.screenplay_agent import ScreenplayAgent
 from app.agents.narration_agent import NarrationAgent
 from app.agents.character_agent import CharacterAgent
+
+from app.workflows.scene_planner_workflow import ScenePlannerWorkflow
 from app.workflows.image_workflow import ImageWorkflow
+
 from app.services.video_service import VideoService
 
-class MovieWorkflow:
+
+class MovieWorkflow(BaseWorkflow):
 
     def __init__(self):
+
+        super().__init__()
+
         self.story_agent = StoryAgent()
         self.screenplay_agent = ScreenplayAgent()
         self.narration_agent = NarrationAgent()
         self.character_agent = CharacterAgent()
+
+        self.scene_planner_workflow = ScenePlannerWorkflow()
         self.image_workflow = ImageWorkflow()
+
         self.video_service = VideoService()
+
     def run(self, genre, language, duration):
 
-        print("\n" + "=" * 60)
-        print("🎬 AI MOVIE STUDIO")
-        print("=" * 60)
+        self.header("AI MOVIE STUDIO")
 
-        # -----------------------------------
-        # Step 1 : Story
-        # -----------------------------------
+        # --------------------------------------------------
+        # Story
+        # --------------------------------------------------
 
-        print("\n📖 Generating Story...\n")
+        self.log_step("Generating Story")
 
         story_file = self.story_agent.generate_story(
             genre=genre,
@@ -32,76 +43,83 @@ class MovieWorkflow:
             duration=duration
         )
 
-        print("✅ Story Generated")
+        self.log_success("Story Generated")
 
-        # -----------------------------------
-        # Step 2 : Screenplay
-        # -----------------------------------
+        # --------------------------------------------------
+        # Screenplay
+        # --------------------------------------------------
 
-        print("\n🎞 Generating Screenplay...\n")
+        self.log_step("Generating Screenplay")
 
-        screenplay, screenplay_file = self.screenplay_agent.generate_screenplay(
-            story_file
-        )
+        screenplay, screenplay_file = \
+            self.screenplay_agent.generate_screenplay(
+                story_file
+            )
 
-        print("✅ Screenplay Generated")
+        self.log_success("Screenplay Generated")
 
-        # -----------------------------------
-        # Step 3 : Narration
-        # -----------------------------------
+        # --------------------------------------------------
+        # Narration
+        # --------------------------------------------------
 
-        print("\n🎤 Generating Narration...\n")
+        self.log_step("Generating Narration")
 
         narrations = self.narration_agent.generate_narration(
             screenplay
         )
 
-        print("✅ Narration Generated")
+        self.log_success("Narration Generated")
 
-        # -----------------------------------
-        # Step 4 : Characters
-        # -----------------------------------
+        # --------------------------------------------------
+        # Characters
+        # --------------------------------------------------
 
-        print("\n👤 Generating Characters...\n")
+        self.log_step("Generating Characters")
 
         characters = self.character_agent.generate_characters(
             screenplay
         )
 
-        print("✅ Characters Generated")
+        self.log_success("Characters Generated")
 
-        # -----------------------------------
-        # Step 5 : Images
-        # -----------------------------------
+        # --------------------------------------------------
+        # Scene Plans
+        # --------------------------------------------------
+
+        scene_plans = \
+            self.scene_planner_workflow.generate_scene_plans(
+                screenplay
+            )
+
+        # --------------------------------------------------
+        # Images
+        # --------------------------------------------------
 
         images = self.image_workflow.generate_images(
             screenplay
         )
 
-        print("\n✅ Images Generated")
+        self.log_success("Images Generated")
 
-        # -----------------------------------
-        # Step 6 : Video
-        # -----------------------------------
+        # --------------------------------------------------
+        # Video
+        # --------------------------------------------------
+
+        self.log_step("Generating Video")
 
         video = self.video_service.create_video()
 
-        print("\n✅ Video Generated")
+        self.log_success("Video Generated")
 
-        
-        print("\n" + "=" * 60)
-        print("🎉 MOVIE WORKFLOW COMPLETED")
-        print("=" * 60)
-
-
-        
+        self.footer("MOVIE WORKFLOW COMPLETED")
 
         return {
-           "story_file": story_file,
+            "story_file": story_file,
             "screenplay_file": screenplay_file,
             "screenplay": screenplay,
-            "narrations": narrations,
             "characters": characters,
+            "narrations": narrations,
+            "scene_plans": scene_plans,
             "images": images,
             "video": video
         }

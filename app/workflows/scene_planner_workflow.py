@@ -1,17 +1,20 @@
 import json
 import os
 
+from app.workflows.base_workflow import BaseWorkflow
 from app.agents.scene_planner_agent import ScenePlannerAgent
 
 
-class ScenePlannerWorkflow:
+class ScenePlannerWorkflow(BaseWorkflow):
 
     def __init__(self):
+        super().__init__()
+
         self.agent = ScenePlannerAgent()
 
     def generate_scene_plans(self, screenplay):
 
-        print("\n🎬 Generating Scene Plans...\n")
+        self.log_step("Generating Scene Plans")
 
         plans = []
 
@@ -21,13 +24,14 @@ class ScenePlannerWorkflow:
 
             plans.append(plan)
 
-            print(f"✅ Scene {scene.scene_number} Planned")
+            self.log_success(
+                f"Scene {scene.scene_number} Planned"
+            )
 
-        # -------------------------
-        # Save Scene Plans
-        # -------------------------
-
-        os.makedirs("output/scene_plans", exist_ok=True)
+        os.makedirs(
+            "output/scene_plans",
+            exist_ok=True
+        )
 
         filename = "output/scene_plans/scene_plans.json"
 
@@ -39,10 +43,20 @@ class ScenePlannerWorkflow:
             ]
         }
 
-        with open(filename, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=4)
+        with open(
+            filename,
+            "w",
+            encoding="utf-8"
+        ) as f:
 
-        print("\n✅ Scene Plans Saved:")
-        print(filename)
+            json.dump(
+                data,
+                f,
+                indent=4
+            )
+
+        self.log_success(
+            f"Scene Plans Saved: {filename}"
+        )
 
         return plans

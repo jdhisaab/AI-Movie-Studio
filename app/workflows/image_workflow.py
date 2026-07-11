@@ -1,18 +1,22 @@
+from app.workflows.base_workflow import BaseWorkflow
+
 from app.agents.image_prompt_agent import ImagePromptAgent
 from app.services.dummy_image_service import DummyImageService
 
 
-class ImageWorkflow:
+class ImageWorkflow(BaseWorkflow):
 
     def __init__(self):
+        super().__init__()
+
         self.prompt_agent = ImagePromptAgent()
         self.image_service = DummyImageService()
 
     def generate_images(self, screenplay):
 
-        generated_images = []
+        self.log_step("Generating Images")
 
-        print("\n🖼 Generating Images...\n")
+        generated_images = []
 
         for scene in screenplay.scenes:
 
@@ -25,6 +29,8 @@ class ImageWorkflow:
 
             generated_images.append(image)
 
-            print(f"✅ Scene {scene.scene_number} completed")
+            self.log_success(
+                f"Scene {scene.scene_number} completed"
+            )
 
         return generated_images
