@@ -1,26 +1,29 @@
-from app.services.ollama_service import OllamaService
-from app.utils.file_manager import FileManager
+from app.agents.base_agent import BaseAgent
 from app.utils.json_parser import JsonParser
 from app.services.scene_mapper import SceneMapper
+from app.utils.file_manager import FileManager
 
-class ScreenplayAgent:
-    """Generates screenplay JSON from a story."""
+
+class ScreenplayAgent(BaseAgent):
 
     def __init__(self):
-        self.ollama = OllamaService()
+        super().__init__()
 
-    def generate_screenplay(self, story: str):
+    def generate_screenplay(self, story):
 
-        prompt = FileManager.read_text(
-            "app/prompts/screenplay_prompt.txt"
+        prompt = self.load_prompt("screenplay_prompt.txt")
+
+        prompt = self.replace_variables(
+            prompt,
+            {
+                "story": story
+            }
         )
 
-        prompt = prompt.format(story=story)
-        response = self.ollama.generate(prompt)
-
-        print("\n========== RAW AI RESPONSE ==========\n")
+        response = self.generate(prompt)
+        print("\n========== RAW RESPONSE ==========")
         print(response)
-        print("\n=====================================\n")
+        print("==================================\n")
 
         screenplay_dict = JsonParser.parse(response)
 
@@ -31,6 +34,9 @@ class ScreenplayAgent:
             "screenplay"
         ).replace(".txt", ".json")
 
-        FileManager.write_json(filename, screenplay_dict)
+        FileManager.write_json(
+            filename,
+            screenplay_dict
+        )
 
         return screenplay, filename

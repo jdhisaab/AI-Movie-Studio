@@ -1,19 +1,14 @@
-from app.services.ollama_service import OllamaService
+from app.agents.base_agent import BaseAgent
 from app.services.character_mapper import CharacterMapper
-from app.utils.file_manager import FileManager
 from app.utils.json_parser import JsonParser
 
 
-class CharacterAgent:
+class CharacterAgent(BaseAgent):
 
     def __init__(self):
-        self.ollama = OllamaService()
+        super().__init__()
 
     def generate_characters(self, screenplay):
-
-        prompt_template = FileManager.read_text(
-            "app/prompts/character_prompt.txt"
-        )
 
         screenplay_text = ""
 
@@ -27,15 +22,30 @@ Characters: {", ".join(scene.characters)}
 Narration: {scene.narration}
 
 Actions: {scene.actions}
+
 """
 
-        prompt = prompt_template.format(
-            screenplay=screenplay_text
+        prompt = self.build_prompt(
+            "character_prompt.txt",
+            {
+                "screenplay": screenplay_text
+            }
         )
 
-        response = self.ollama.generate(prompt)
+        response = self.generate(prompt)
 
-        data = JsonParser.parse(response)
+        print("\n================ CHARACTER RESPONSE ================\n")
+        print(response)
+        print("\n====================================================\n")
+
+        try:
+            data = JsonParser.parse(response)
+
+        except Exception as e:
+
+            print("\n❌ Invalid JSON returned by Character Agent\n")
+
+            raise e
 
         characters = CharacterMapper.from_dict(data)
 

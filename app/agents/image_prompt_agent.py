@@ -1,21 +1,18 @@
-from app.services.ollama_service import OllamaService
-from app.utils.file_manager import FileManager
-from app.utils.json_parser import JsonParser
+from app.agents.base_agent import BaseAgent
 
 
-class ImagePromptAgent:
+class ImagePromptAgent(BaseAgent):
 
     def __init__(self):
-        self.ollama = OllamaService()
+        super().__init__()
 
     def generate_prompt(self, scene: str):
 
-        prompt = FileManager.read_text(
-            "app/prompts/image_prompt.txt"
+        data = self.generate_json(
+            "image_prompt.txt",
+            {
+                "scene": scene
+            }
         )
 
-        prompt = prompt.format(scene=scene)
-
-        response = self.ollama.generate(prompt)
-
-        return JsonParser.parse(response)
+        return data

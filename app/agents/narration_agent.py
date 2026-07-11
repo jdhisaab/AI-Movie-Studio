@@ -1,19 +1,13 @@
-from app.services.ollama_service import OllamaService
+from app.agents.base_agent import BaseAgent
 from app.services.narration_mapper import NarrationMapper
-from app.utils.file_manager import FileManager
-from app.utils.json_parser import JsonParser
 
 
-class NarrationAgent:
+class NarrationAgent(BaseAgent):
 
     def __init__(self):
-        self.ollama = OllamaService()
+        super().__init__()
 
     def generate_narration(self, screenplay):
-
-        prompt_template = FileManager.read_text(
-            "app/prompts/narration_prompt.txt"
-        )
 
         screenplay_text = ""
 
@@ -27,15 +21,15 @@ Title: {scene.title}
 Narration: {scene.narration}
 
 Actions: {scene.actions}
+
 """
 
-        prompt = prompt_template.format(
-            screenplay=screenplay_text
+        data = self.generate_json(
+            "narration_prompt.txt",
+            {
+                "screenplay": screenplay_text
+            }
         )
-
-        response = self.ollama.generate(prompt)
-
-        data = JsonParser.parse(response)
 
         narrations = NarrationMapper.from_dict(data)
 
