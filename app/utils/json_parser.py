@@ -1,26 +1,39 @@
 import json
-import re
 
 
 class JsonParser:
-    """Utility class for parsing JSON responses from LLMs."""
+    """
+    Robust JSON parser for LLM responses.
+
+    Handles:
+    - Markdown code fences
+    - Extra explanations before/after JSON
+    - Multiple JSON objects
+    """
 
     @staticmethod
     def parse(text: str):
 
         text = text.strip()
 
-        # Remove markdown code fences
+        # Remove markdown fences
         text = text.replace("```json", "")
         text = text.replace("```", "")
         text = text.strip()
 
-        # Extract the first complete JSON object
-        match = re.search(r"\{.*\}", text, re.DOTALL)
+        decoder = json.JSONDecoder()
 
-        if not match:
-            raise ValueError("No JSON object found in response.")
+        for i, ch in enumerate(text):
 
-        json_text = match.group(0)
+            if ch == "{":
 
-        return json.loads(json_text)
+                try:
+
+                    obj, end = decoder.raw_decode(text[i:])
+
+                    return obj
+
+                except json.JSONDecodeError:
+                    continue
+
+        raise ValueError("No valid JSON object found.")

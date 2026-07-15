@@ -1,14 +1,22 @@
-import os
+from app.providers.local_image_provider import LocalImageProvider
 
 
 class ImageService:
+    """
+    Service responsible for image generation.
+    """
 
-    @staticmethod
-    def generate(prompt: str, filename: str):
+    def __init__(self):
 
-        os.makedirs("output/images", exist_ok=True)
+        self.provider = LocalImageProvider()
 
-        with open(filename, "w", encoding="utf-8") as file:
-            file.write(prompt)
+    def generate(
+        self,
+        prompt: str,
+        output_file: str
+    ):
 
-        return filename
+        return self.provider.generate(
+            prompt,
+            output_file
+        )

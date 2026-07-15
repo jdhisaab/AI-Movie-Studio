@@ -2,38 +2,52 @@ from app.workflows.base_workflow import BaseWorkflow
 
 from app.agents.story_agent import StoryAgent
 from app.agents.screenplay_agent import ScreenplayAgent
-from app.agents.narration_agent import NarrationAgent
 from app.agents.character_agent import CharacterAgent
+from app.agents.narration_agent import NarrationAgent
 
 from app.workflows.scene_planner_workflow import ScenePlannerWorkflow
 from app.workflows.image_workflow import ImageWorkflow
+from app.workflows.voice_workflow import VoiceWorkflow
 
 from app.services.video_service import VideoService
 
 
 class MovieWorkflow(BaseWorkflow):
+    """
+    Main workflow responsible for generating
+    the complete AI movie.
+    """
 
     def __init__(self):
 
         super().__init__()
 
+        # Agents
         self.story_agent = StoryAgent()
         self.screenplay_agent = ScreenplayAgent()
-        self.narration_agent = NarrationAgent()
         self.character_agent = CharacterAgent()
+        self.narration_agent = NarrationAgent()
 
+        # Workflows
         self.scene_planner_workflow = ScenePlannerWorkflow()
         self.image_workflow = ImageWorkflow()
+        self.voice_workflow = VoiceWorkflow()
 
+        # Services
         self.video_service = VideoService()
 
-    def run(self, genre, language, duration):
+    def run(
+        self,
+        genre: str,
+        language: str,
+        duration: int
+    ):
 
         self.header("AI MOVIE STUDIO")
 
-        # --------------------------------------------------
+        # --------------------------------------------------------
         # Story
-        # --------------------------------------------------
+        # --------------------------------------------------------
 
         self.log_step("Generating Story")
 
@@ -45,34 +59,23 @@ class MovieWorkflow(BaseWorkflow):
 
         self.log_success("Story Generated")
 
-        # --------------------------------------------------
+        # --------------------------------------------------------
         # Screenplay
-        # --------------------------------------------------
+        # --------------------------------------------------------
 
         self.log_step("Generating Screenplay")
 
-        screenplay, screenplay_file = \
+        screenplay, screenplay_file = (
             self.screenplay_agent.generate_screenplay(
                 story_file
             )
+        )
 
         self.log_success("Screenplay Generated")
 
-        # --------------------------------------------------
-        # Narration
-        # --------------------------------------------------
-
-        self.log_step("Generating Narration")
-
-        narrations = self.narration_agent.generate_narration(
-            screenplay
-        )
-
-        self.log_success("Narration Generated")
-
-        # --------------------------------------------------
+        # --------------------------------------------------------
         # Characters
-        # --------------------------------------------------
+        # --------------------------------------------------------
 
         self.log_step("Generating Characters")
 
@@ -82,18 +85,40 @@ class MovieWorkflow(BaseWorkflow):
 
         self.log_success("Characters Generated")
 
-        # --------------------------------------------------
-        # Scene Plans
-        # --------------------------------------------------
+        # --------------------------------------------------------
+        # Narration
+        # --------------------------------------------------------
 
-        scene_plans = \
+        self.log_step("Generating Narration")
+
+        narrations = self.narration_agent.generate_narration(
+            screenplay
+        )
+
+        self.log_success("Narration Generated")
+
+        # --------------------------------------------------------
+        # Voice
+        # --------------------------------------------------------
+
+        voice_files = self.voice_workflow.generate_voice(
+            narrations=narrations,
+            language="en"
+        )
+
+        # --------------------------------------------------------
+        # Scene Plans
+        # --------------------------------------------------------
+
+        scene_plans = (
             self.scene_planner_workflow.generate_scene_plans(
                 screenplay
             )
+        )
 
-        # --------------------------------------------------
+        # --------------------------------------------------------
         # Images
-        # --------------------------------------------------
+        # --------------------------------------------------------
 
         images = self.image_workflow.generate_images(
             screenplay
@@ -101,9 +126,9 @@ class MovieWorkflow(BaseWorkflow):
 
         self.log_success("Images Generated")
 
-        # --------------------------------------------------
+        # --------------------------------------------------------
         # Video
-        # --------------------------------------------------
+        # --------------------------------------------------------
 
         self.log_step("Generating Video")
 
@@ -119,7 +144,8 @@ class MovieWorkflow(BaseWorkflow):
             "screenplay": screenplay,
             "characters": characters,
             "narrations": narrations,
+            "voice_files": voice_files,
             "scene_plans": scene_plans,
             "images": images,
-            "video": video
+            "video": video,
         }
