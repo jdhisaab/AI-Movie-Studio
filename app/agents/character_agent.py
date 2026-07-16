@@ -4,11 +4,16 @@ from app.utils.json_parser import JsonParser
 
 
 class CharacterAgent(BaseAgent):
+    """
+    Generates movie characters from screenplay.
+    """
 
     def __init__(self):
         super().__init__()
 
     def generate_characters(self, screenplay):
+
+        self.info("Generating Characters...")
 
         screenplay_text = ""
 
@@ -25,8 +30,12 @@ Actions: {scene.actions}
 
 """
 
-        prompt = self.build_prompt(
-            "character_prompt.txt",
+        prompt = self.load_prompt(
+            "character_prompt.txt"
+        )
+
+        prompt = self.replace_variables(
+            prompt,
             {
                 "screenplay": screenplay_text
             }
@@ -34,19 +43,23 @@ Actions: {scene.actions}
 
         response = self.generate(prompt)
 
-        print("\n================ CHARACTER RESPONSE ================\n")
-        print(response)
-        print("\n====================================================\n")
-
         try:
+
+            print("\n================ CHARACTER AI RESPONSE ================\n")
+            print(response)
+            print("\n=======================================================\n")
+
             data = JsonParser.parse(response)
 
-        except Exception as e:
+        except Exception:
 
-            print("\n❌ Invalid JSON returned by Character Agent\n")
-
-            raise e
+            print("\n========== RAW CHARACTER RESPONSE ==========\n")
+            print(response)
+            print("\n============================================\n")
+            raise
 
         characters = CharacterMapper.from_dict(data)
+
+        self.success("Characters Generated")
 
         return characters

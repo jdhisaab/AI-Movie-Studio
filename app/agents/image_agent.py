@@ -1,23 +1,26 @@
 import os
 
 from app.agents.base_agent import BaseAgent
+from app.config import settings
 from app.services.image_service import ImageService
 
 
 class ImageAgent(BaseAgent):
+    """
+    Generates images from image prompts.
+    """
 
     def __init__(self):
         super().__init__()
 
         self.image_service = ImageService()
 
-    def generate_images(
-        self,
-        prompts
-    ):
+    def generate_images(self, prompts):
+
+        self.info("Generating Images...")
 
         os.makedirs(
-            "output/images",
+            settings.IMAGE_DIR,
             exist_ok=True
         )
 
@@ -28,23 +31,30 @@ class ImageAgent(BaseAgent):
             start=1
         ):
 
-            print(
-                f"🖼 Generating Image {index}..."
+            self.info(
+                f"Generating Image {index}"
             )
 
-            output_file = (
-                f"output/images/scene_{index:03}.png"
+            output_file = os.path.join(
+                settings.IMAGE_DIR,
+                f"scene_{index:03}.png"
             )
 
-            image = self.image_service.generate(
+            image_path = self.image_service.generate(
                 prompt=prompt,
                 output_file=output_file
             )
 
-            image_files.append(image)
-
-            print(
-                f"✅ Scene {index} Image Generated"
+            image_files.append(
+                image_path
             )
+
+            self.success(
+                f"Scene {index} Image Generated"
+            )
+
+        self.success(
+            f"{len(image_files)} Images Generated Successfully"
+        )
 
         return image_files

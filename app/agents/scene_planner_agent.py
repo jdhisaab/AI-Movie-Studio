@@ -3,6 +3,7 @@ from dataclasses import asdict
 
 from app.agents.base_agent import BaseAgent
 from app.models.scene_plan import ScenePlan
+from app.utils.json_parser import JsonParser
 
 
 class ScenePlannerAgent(BaseAgent):
@@ -12,23 +13,29 @@ class ScenePlannerAgent(BaseAgent):
 
     def generate_scene_plan(self, scene):
 
-        print(f"🎬 Planning Scene {scene.scene_number}...")
+        self.info(
+            f"Planning Scene {scene.scene_number}"
+        )
 
         scene_json = json.dumps(
             asdict(scene),
             indent=2
         )
 
-        data = self.generate_json(
-            "scene_planner_prompt.txt",
+        prompt = self.load_prompt(
+            "scene_planner_prompt.txt"
+        )
+
+        prompt = self.replace_variables(
+            prompt,
             {
                 "scene": scene_json
             }
         )
 
-        # -------------------------------------------------
-        # Normalization
-        # -------------------------------------------------
+        response = self.generate(prompt)
+
+        data = JsonParser.parse(response)
 
         data["scene_number"] = data.get(
             "scene_number",
@@ -36,31 +43,52 @@ class ScenePlannerAgent(BaseAgent):
         )
 
         data["location"] = str(
-            data.get("location", "Unknown")
+            data.get(
+                "location",
+                "Unknown"
+            )
         )
 
         data["time_of_day"] = str(
-            data.get("time_of_day", "Day")
+            data.get(
+                "time_of_day",
+                "Day"
+            )
         )
 
         data["camera_motion"] = str(
-            data.get("camera_motion", "Static")
+            data.get(
+                "camera_motion",
+                "Static"
+            )
         )
 
         data["character_motion"] = str(
-            data.get("character_motion", "Idle")
+            data.get(
+                "character_motion",
+                "Idle"
+            )
         )
 
         data["background_motion"] = str(
-            data.get("background_motion", "None")
+            data.get(
+                "background_motion",
+                "None"
+            )
         )
 
         data["style"] = str(
-            data.get("style", "Hollywood Cinematic")
+            data.get(
+                "style",
+                "Hollywood Cinematic"
+            )
         )
 
         data["aspect_ratio"] = str(
-            data.get("aspect_ratio", "16:9")
+            data.get(
+                "aspect_ratio",
+                "16:9"
+            )
         )
 
         effects = data.get(
@@ -70,14 +98,23 @@ class ScenePlannerAgent(BaseAgent):
 
         normalized = []
 
-        if isinstance(effects, list):
+        if isinstance(
+            effects,
+            list
+        ):
 
             for effect in effects:
 
-                if isinstance(effect, str):
+                if isinstance(
+                    effect,
+                    str
+                ):
                     normalized.append(effect)
 
-                elif isinstance(effect, dict):
+                elif isinstance(
+                    effect,
+                    dict
+                ):
 
                     normalized.append(
                         effect.get(
@@ -96,11 +133,21 @@ class ScenePlannerAgent(BaseAgent):
                     )
 
                 else:
-                    normalized.append(str(effect))
+
+                    normalized.append(
+                        str(effect)
+                    )
 
         else:
-            normalized = [str(effects)]
+
+            normalized = [
+                str(effects)
+            ]
 
         data["visual_effects"] = normalized
+
+        self.success(
+            f"Scene {scene.scene_number} Planned"
+        )
 
         return ScenePlan(**data)

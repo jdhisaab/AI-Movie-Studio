@@ -2,13 +2,25 @@ from app.agents.base_agent import BaseAgent
 
 
 class StoryAgent(BaseAgent):
+    """
+    Generates the movie story.
+    """
 
     def __init__(self):
         super().__init__()
 
-    def generate_story(self, genre, language, duration):
+    def generate_story(
+        self,
+        genre: str,
+        language: str,
+        duration: int
+    ) -> str:
 
-        prompt = self.load_prompt("story_prompt.txt")
+        self.info("Generating Story...")
+
+        prompt = self.load_prompt(
+            "story_prompt.txt"
+        )
 
         prompt = self.replace_variables(
             prompt,
@@ -20,5 +32,7 @@ class StoryAgent(BaseAgent):
         )
 
         story = self.generate(prompt)
+
+        self.success("Story Generated")
 
         return story
