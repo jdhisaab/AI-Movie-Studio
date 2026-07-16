@@ -1,0 +1,7 @@
+"""
+Application configuration package.
+"""
+
+from app.config.settings import Settings
+
+settings = Settings()
