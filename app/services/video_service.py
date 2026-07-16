@@ -1,32 +1,70 @@
 import os
-import subprocess
+
+from moviepy import (
+    AudioFileClip,
+    ImageClip,
+    concatenate_videoclips
+)
+
+from app.config import settings
 
 
 class VideoService:
+    """
+    Creates a narrated movie from scene images and audio.
+    """
 
     def create_video(
         self,
-        image_folder="output/images",
-        output_file="output/videos/movie.mp4",
-        fps=1
+        image_files,
+        audio_files,
+        output_file=None
     ):
 
-        os.makedirs("output/videos", exist_ok=True)
+        if output_file is None:
 
-        command = [
-            "ffmpeg",
-            "-y",
-            "-framerate", str(fps),
-            "-i", f"{image_folder}/scene_%03d.png",
-            "-c:v", "libx264",
-            "-pix_fmt", "yuv420p",
-            output_file
-        ]
+            os.makedirs(
+                settings.VIDEO_DIR,
+                exist_ok=True
+            )
 
-        print("\n🎬 Creating Video...\n")
+            output_file = os.path.join(
+                settings.VIDEO_DIR,
+                "movie.mp4"
+            )
 
-        subprocess.run(command, check=True)
+        clips = []
 
-        print(f"\n✅ Video Saved:\n{output_file}")
+        for image, audio in zip(
+            image_files,
+            audio_files
+        ):
+
+            audio_clip = AudioFileClip(audio)
+
+            image_clip = (
+                ImageClip(image)
+                .with_duration(audio_clip.duration)
+                .with_audio(audio_clip)
+            )
+
+            clips.append(image_clip)
+
+        final_video = concatenate_videoclips(
+            clips,
+            method="compose"
+        )
+
+        final_video.write_videofile(
+            output_file,
+            fps=settings.VIDEO_FPS,
+            codec="libx264",
+            audio_codec="aac"
+        )
+
+        final_video.close()
+
+        for clip in clips:
+            clip.close()
 
         return output_file

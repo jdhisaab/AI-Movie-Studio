@@ -1,16 +1,15 @@
 from app.agents.base_agent import BaseAgent
-from app.utils.json_parser import JsonParser
 
 
 class ImagePromptAgent(BaseAgent):
+    """
+    Generates an image prompt for each screenplay scene.
+    """
 
     def __init__(self):
         super().__init__()
 
-    def generate_prompt(
-        self,
-        scene
-    ):
+    def generate_prompt(self, scene):
 
         self.info(
             f"Generating Image Prompt for Scene {scene.scene_number}"
@@ -27,12 +26,10 @@ class ImagePromptAgent(BaseAgent):
             }
         )
 
-        response = self.generate(prompt)
-
-        data = JsonParser.parse(response)
+        image_prompt = self.generate(prompt)
 
         self.success(
             f"Image Prompt Generated for Scene {scene.scene_number}"
         )
 
-        return data
+        return image_prompt.strip()

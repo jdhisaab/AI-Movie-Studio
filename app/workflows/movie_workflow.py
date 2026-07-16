@@ -11,6 +11,8 @@ from app.workflows.voice_workflow import VoiceWorkflow
 
 from app.services.video_service import VideoService
 
+from app.config import settings
+
 
 class MovieWorkflow(BaseWorkflow):
     """
@@ -51,7 +53,7 @@ class MovieWorkflow(BaseWorkflow):
 
         self.log_step("Generating Story")
 
-        story_file = self.story_agent.generate_story(
+        story = self.story_agent.generate_story(
             genre=genre,
             language=language,
             duration=duration
@@ -67,7 +69,7 @@ class MovieWorkflow(BaseWorkflow):
 
         screenplay, screenplay_file = (
             self.screenplay_agent.generate_screenplay(
-                story_file
+                story
             )
         )
 
@@ -101,14 +103,20 @@ class MovieWorkflow(BaseWorkflow):
         # Voice
         # --------------------------------------------------------
 
-        voice_files = self.voice_workflow.generate_voice(
+        self.log_step("Generating Voice")
+
+        audio_files = self.voice_workflow.generate_voice(
             narrations=narrations,
-            language="en"
+            language=settings.VOICE_LANGUAGE
         )
+
+        self.log_success("Voice Generated")
 
         # --------------------------------------------------------
         # Scene Plans
         # --------------------------------------------------------
+
+        self.log_step("Planning Scenes")
 
         scene_plans = (
             self.scene_planner_workflow.generate_scene_plans(
@@ -116,11 +124,15 @@ class MovieWorkflow(BaseWorkflow):
             )
         )
 
+        self.log_success("Scene Plans Generated")
+
         # --------------------------------------------------------
         # Images
         # --------------------------------------------------------
 
-        images = self.image_workflow.generate_images(
+        self.log_step("Generating Images")
+
+        image_files = self.image_workflow.generate_images(
             screenplay
         )
 
@@ -130,22 +142,25 @@ class MovieWorkflow(BaseWorkflow):
         # Video
         # --------------------------------------------------------
 
-        self.log_step("Generating Video")
+        self.log_step("Generating Final Movie")
 
-        video = self.video_service.create_video()
+        video_file = self.video_service.create_video(
+            image_files=image_files,
+            audio_files=audio_files
+        )
 
-        self.log_success("Video Generated")
+        self.log_success("Movie Generated")
 
         self.footer("MOVIE WORKFLOW COMPLETED")
 
         return {
-            "story_file": story_file,
-            "screenplay_file": screenplay_file,
+            "story": story,
             "screenplay": screenplay,
+            "screenplay_file": screenplay_file,
             "characters": characters,
             "narrations": narrations,
-            "voice_files": voice_files,
             "scene_plans": scene_plans,
-            "images": images,
-            "video": video,
+            "images": image_files,
+            "voice_files": audio_files,
+            "video": video_file,
         }

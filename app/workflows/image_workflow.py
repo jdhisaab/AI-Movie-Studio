@@ -1,7 +1,7 @@
 from app.workflows.base_workflow import BaseWorkflow
 
 from app.agents.image_prompt_agent import ImagePromptAgent
-from app.services.dummy_image_service import DummyImageService
+from app.agents.image_agent import ImageAgent
 
 
 class ImageWorkflow(BaseWorkflow):
@@ -10,27 +10,34 @@ class ImageWorkflow(BaseWorkflow):
         super().__init__()
 
         self.prompt_agent = ImagePromptAgent()
-        self.image_service = DummyImageService()
+        self.image_agent = ImageAgent()
 
     def generate_images(self, screenplay):
 
-        self.log_step("Generating Images")
+        self.log_step("Generating Image Prompts")
 
-        generated_images = []
+        prompts = []
 
         for scene in screenplay.scenes:
 
-            prompt = self.prompt_agent.generate_prompt(scene)
-
-            image = self.image_service.generate(
-                scene.scene_number,
-                scene.title
+            prompt = self.prompt_agent.generate_prompt(
+                scene
             )
 
-            generated_images.append(image)
+            prompts.append(prompt)
 
             self.log_success(
-                f"Scene {scene.scene_number} completed"
+                f"Prompt Generated for Scene {scene.scene_number}"
             )
 
-        return generated_images
+        self.log_step("Generating Images")
+
+        image_files = self.image_agent.generate_images(
+            prompts
+        )
+
+        self.log_success(
+            f"{len(image_files)} Images Generated"
+        )
+
+        return image_files
