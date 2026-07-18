@@ -1,5 +1,9 @@
-from dataclasses import dataclass
 
+import os
+
+from dotenv import load_dotenv
+from dataclasses import dataclass
+load_dotenv()
 
 @dataclass(frozen=True)
 class Settings:
@@ -64,7 +68,14 @@ class Settings:
     IMAGE_HEIGHT: int = 720
 
     IMAGE_FORMAT: str = "PNG"
+    # =====================================================
+    # Hugging Face
+    # =====================================================
 
+    HF_API_KEY: str = os.getenv("HF_API_KEY", "")
+
+    HF_MODEL: str = "black-forest-labs/FLUX.1-schnell"
+    
     # =====================================================
     # Voice Settings
     # =====================================================
@@ -90,3 +101,27 @@ class Settings:
     LOG_LEVEL: str = "INFO"
 
     LOG_FILE: str = "logs/movie_studio.log"
+    # =====================================================
+    # Fal.ai
+    # =====================================================
+
+    FAL_API_KEY: str = ""
+
+    FAL_MODEL: str = "fal-ai/flux/dev"
+
+    IMAGE_STEPS: int = 28
+
+    IMAGE_GUIDANCE: float = 3.5
+    # =====================================================
+    # Developer Mode
+    # =====================================================
+
+    DEV_MODE: bool = True
+
+    DEV_MAX_SCENES: int = 3
+
+    DEV_MAX_NARRATION_WORDS: int = 20
+
+    DEV_SKIP_IMAGE_GENERATION: bool = False
+
+    DEV_SKIP_VIDEO_GENERATION: bool = False

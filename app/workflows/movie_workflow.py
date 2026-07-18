@@ -74,7 +74,23 @@ class MovieWorkflow(BaseWorkflow):
         )
 
         self.log_success("Screenplay Generated")
+        # --------------------------------------------------------
+        # Developer Mode
+        # --------------------------------------------------------
 
+        if settings.DEV_MODE:
+
+            original_scene_count = len(screenplay.scenes)
+
+            screenplay.scenes = screenplay.scenes[
+                :settings.DEV_MAX_SCENES
+            ]
+
+            self.log_info(
+                f"Developer Mode: Reduced scenes "
+                f"from {original_scene_count} "
+                f"to {len(screenplay.scenes)}"
+            )
         # --------------------------------------------------------
         # Characters
         # --------------------------------------------------------
@@ -130,26 +146,46 @@ class MovieWorkflow(BaseWorkflow):
         # Images
         # --------------------------------------------------------
 
-        self.log_step("Generating Images")
+        if settings.DEV_SKIP_IMAGE_GENERATION:
 
-        image_files = self.image_workflow.generate_images(
-            screenplay
-        )
+            self.log_warning(
+                "Developer Mode: Skipping Image Generation"
+            )
 
-        self.log_success("Images Generated")
+            images = []
+
+        else:
+
+            images = self.image_workflow.generate_images(
+                screenplay
+            )
+
+            self.log_success("Images Generated")
+
+        
 
         # --------------------------------------------------------
         # Video
         # --------------------------------------------------------
 
-        self.log_step("Generating Final Movie")
+        if settings.DEV_SKIP_VIDEO_GENERATION:
 
-        video_file = self.video_service.create_video(
-            image_files=image_files,
-            audio_files=audio_files
-        )
+            self.log_warning(
+                "Developer Mode: Skipping Video Generation"
+            )
 
-        self.log_success("Movie Generated")
+            video = None
+
+        else:
+
+            self.log_step("Generating Video")
+
+            video = self.video_service.create_video(
+                image_files=images,
+                audio_files=audio_files
+            )
+
+            self.log_success("Video Generated")
 
         self.footer("MOVIE WORKFLOW COMPLETED")
 
@@ -160,7 +196,7 @@ class MovieWorkflow(BaseWorkflow):
             "characters": characters,
             "narrations": narrations,
             "scene_plans": scene_plans,
-            "images": image_files,
+            "images": images,
             "voice_files": audio_files,
-            "video": video_file,
+            "video": video,
         }

@@ -8,7 +8,7 @@ def main():
     workflow.run(
         genre="Romance",
         language="English",
-        duration=10
+        duration=0.5
     )
 
 

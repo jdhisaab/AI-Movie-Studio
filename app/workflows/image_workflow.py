@@ -1,43 +1,63 @@
+import os
+
 from app.workflows.base_workflow import BaseWorkflow
 
 from app.agents.image_prompt_agent import ImagePromptAgent
-from app.agents.image_agent import ImageAgent
+from app.services.image_service import ImageService
+
+from app.config import settings
 
 
 class ImageWorkflow(BaseWorkflow):
+    """
+    Workflow responsible for generating images
+    for every screenplay scene.
+    """
 
     def __init__(self):
+
         super().__init__()
 
         self.prompt_agent = ImagePromptAgent()
-        self.image_agent = ImageAgent()
+        self.image_service = ImageService()
 
     def generate_images(self, screenplay):
 
-        self.log_step("Generating Image Prompts")
+        self.log_step("Generating Scene Images")
 
-        prompts = []
+        os.makedirs(
+            settings.IMAGE_DIR,
+            exist_ok=True
+        )
+
+        generated_images = []
 
         for scene in screenplay.scenes:
 
-            prompt = self.prompt_agent.generate_prompt(
-                scene
+            self.log_info(
+                f"Generating prompt for Scene {scene.scene_number}"
             )
 
-            prompts.append(prompt)
+            prompt = self.prompt_agent.generate_prompt(scene)
+
+            output_file = os.path.join(
+                settings.IMAGE_DIR,
+                f"scene_{scene.scene_number:03}.png"
+            )
+
+            image = self.image_service.generate(
+                prompt=prompt,
+                output_file=output_file
+            )
+
+            generated_images.append(image)
 
             self.log_success(
-                f"Prompt Generated for Scene {scene.scene_number}"
+                f"Scene {scene.scene_number} image generated"
             )
 
-        self.log_step("Generating Images")
-
-        image_files = self.image_agent.generate_images(
-            prompts
-        )
-
         self.log_success(
-            f"{len(image_files)} Images Generated"
+            f"{len(generated_images)} Images Generated"
         )
 
-        return image_files
+        return generated_images
